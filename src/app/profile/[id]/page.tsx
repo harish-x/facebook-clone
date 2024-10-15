@@ -1,6 +1,6 @@
-import Feed from "@/app/components/Feed";
-import LeftMenu from "@/app/components/LeftMenu";
-import RightMenu from "@/app/components/RightMenu";
+import Feed from "@/components/Feed";
+import LeftMenu from "@/components/LeftMenu";
+import RightMenu from "@/components/RightMenu";
 import Image from "next/image";
 import React from "react";
 
