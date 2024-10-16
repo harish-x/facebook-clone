@@ -2,7 +2,7 @@ import React from "react";
 import ProfileCard from "./ProfileCard";
 import Link from "next/link";
 import Image from "next/image";
-import Ad from "./Ad";
+import Ad from "../Ad";
 
 type typeT = {
   type: "home" | "profile";

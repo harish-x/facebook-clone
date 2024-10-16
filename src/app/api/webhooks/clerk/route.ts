@@ -57,22 +57,24 @@ export async function POST(req: Request) {
 //   console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
 //   console.log("Webhook body:", body);
 
-  if (eventType === "user.created") {
-    try {
-      await prisma.user.create({
-        data: {
-          id: evt.data.id,
-          username: JSON.parse(body).data.username,
-          avatar: JSON.parse(body).data.image_url || "/noAvatar.png",
-          cover: "/noCover.png",
-        },
-      });
-      return new Response("User has been created!", { status: 201 });
-    } catch (error) {
-        console.log(error)
-      return new Response("Failed to create user", { status: 500 });
-    }
-  }
+ if (eventType === "user.created") {
+   try {
+     
+     await prisma.user.create({
+       data: {
+         id: evt.data.id,
+         username:
+           JSON.parse(body).data.username ?? "hello",
+         avatar: JSON.parse(body).data.image_url || "/noAvatar.png",
+         cover: "/noCover.png",
+       },
+     });
+     return new Response("User has been created!", { status: 201 });
+   } catch (error) {
+     console.error("Failed to create user:", error);
+     return new Response("Failed to create user", { status: 500 });
+   }
+ }
 
   if (eventType === "user.updated") {
     try {

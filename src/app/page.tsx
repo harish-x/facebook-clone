@@ -1,9 +1,9 @@
 import Image from "next/image";
-import LeftMenu from "../components/LeftMenu";
-import RightMenu from "../components/RightMenu";
+import LeftMenu from "../components/leftMenu/LeftMenu";
+import RightMenu from "../components/rightmenu/RightMenu";
 import Stories from "../components/Stories";
 import AddPost from "../components/AddPost";
-import Feed from "../components/Feed";
+import Feed from "../components/feed/Feed";
 
 export default function Home() {
   return (
