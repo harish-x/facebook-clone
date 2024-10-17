@@ -2,17 +2,19 @@
 
 import { auth } from "@clerk/nextjs/server";
 import prisma from "./client";
+import { z } from "zod";
 
 export const switchFollow = async (userId: string) => {
   const { userId: currentUserId } = auth();
+  if (!currentUserId) throw new Error("User is not authenticated!");
   try {
-    if (!currentUserId || userId) throw new Error("something went wrong");
     const existingFollow = await prisma.follower.findFirst({
       where: {
         followerId: currentUserId,
         followingId: userId,
       },
     });
+
     if (existingFollow) {
       await prisma.follower.delete({
         where: {
@@ -41,13 +43,16 @@ export const switchFollow = async (userId: string) => {
         });
       }
     }
-  } catch (error) {}
+  } catch (err) {
+    console.log(err);
+    throw new Error("Something went wrong!");
+  }
 };
 
 export const switchBlock = async (userId: string) => {
   const { userId: currentUserId } = auth();
+  if (!currentUserId) throw new Error("something went wrong");
   try {
-    if (!currentUserId) throw new Error("something went wrong");
     const existingBlock = await prisma.block.findFirst({
       where: {
         blockedId: userId,
@@ -68,6 +73,89 @@ export const switchBlock = async (userId: string) => {
         },
       });
     }
+  } catch (error) {
+    throw new Error("something went wrong");
+  }
+};
+
+export const acceptFollowRequest = async (userId: string) => {
+  const { userId: currentUserId } = auth();
+  if (!currentUserId) throw new Error("something went wrong");
+  try {
+    const existingfollowRequest = await prisma.followRequest.findFirst({
+      where: {
+        senderId: userId,
+        receiverId: currentUserId,
+      },
+    });
+
+    if (existingfollowRequest) {
+      await prisma.followRequest.delete({
+        where: {
+          id: existingfollowRequest.id,
+        },
+      });
+      await prisma.follower.create({
+        data: {
+          followerId: userId,
+          followingId: currentUserId,
+        },
+      });
+    }
+  } catch (error) {
+    throw new Error("something went wrong");
+  }
+};
+
+export const RejectFollowRequest = async (userId: string) => {
+  const { userId: currentUserId } = auth();
+  if (!currentUserId) throw new Error("something went wrong");
+  try {
+    const existingfollowRequest = await prisma.followRequest.findFirst({
+      where: {
+        senderId: userId,
+        receiverId: currentUserId,
+      },
+    });
+
+    if (existingfollowRequest) {
+      await prisma.followRequest.delete({
+        where: {
+          id: existingfollowRequest.id,
+        },
+      });
+    }
+  } catch (error) {
+    throw new Error("something went wrong");
+  }
+};
+
+export const updateProfile = async (formData: FormData, cover: string) => {
+  const { userId: currentUserId } = auth();
+  const fields = Object.fromEntries(formData);
+  const filteredFields = Object.fromEntries(
+    Object.entries(fields).filter(([_, value]) => value !== "")
+  );
+  const Profile = z.object({
+    cover: z.string().optional(),
+    name: z.string().max(50).optional(),
+    description: z.string().max(200).optional(),
+    surname: z.string().max(50).optional(),
+    website: z.string().max(50).optional(),
+    city: z.string().max(50).optional(),
+    school: z.string().max(50).optional(),
+    work: z.string().max(50).optional(),
+  });
+  const validateFields = Profile.safeParse({ ...filteredFields, cover });
+  if (!validateFields.success) throw new Error("something went wrong");
+  if (!currentUserId) throw new Error("something went wrong");
+  try {
+    await prisma.user.update({
+      where: {
+        id: currentUserId,
+      },
+      data: validateFields.data,
+    });
   } catch (error) {
     throw new Error("something went wrong");
   }
