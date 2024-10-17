@@ -131,8 +131,10 @@ export const RejectFollowRequest = async (userId: string) => {
 };
 
 export const updateProfile = async (formData: FormData, cover: string) => {
+   console.log(formData, cover);
   const { userId: currentUserId } = auth();
   const fields = Object.fromEntries(formData);
+ 
   const filteredFields = Object.fromEntries(
     Object.entries(fields).filter(([_, value]) => value !== "")
   );
@@ -146,7 +148,8 @@ export const updateProfile = async (formData: FormData, cover: string) => {
     school: z.string().max(50).optional(),
     work: z.string().max(50).optional(),
   });
-  const validateFields = Profile.safeParse({ ...filteredFields, cover });
+
+  const validateFields = Profile.safeParse({cover, ...filteredFields });
   if (!validateFields.success) throw new Error("something went wrong");
   if (!currentUserId) throw new Error("something went wrong");
   try {
@@ -157,6 +160,9 @@ export const updateProfile = async (formData: FormData, cover: string) => {
       data: validateFields.data,
     });
   } catch (error) {
+    console.log(error);
+    
     throw new Error("something went wrong");
+
   }
 };

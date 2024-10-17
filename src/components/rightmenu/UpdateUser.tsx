@@ -1,17 +1,15 @@
 "use client";
 import { User } from "@prisma/client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { updateProfile } from "@/lib/actions";
-import { CldUploadWidget } from "next-cloudinary";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 
 const UpdateUser = ({ user }: { user: User }) => {
   const [isopen, setOpen] = useState(false);
   const [cover, setCover] = useState<any>(false);
-  console.log(cover);
-  function handleclick() {
-    setOpen(false);
-  }
+
+ 
   return (
     <div>
       <div
@@ -23,13 +21,24 @@ const UpdateUser = ({ user }: { user: User }) => {
       {isopen && (
         <div className="absolute w-full min-h-screen top-0 left-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
           <form
-            action={(formData) => updateProfile(formData, cover?.secure_url)}
+            onSubmit={async (event) => {
+              event.preventDefault();
+              await updateProfile(
+                new FormData(event.currentTarget),
+                cover?.secure_url
+              );
+              setOpen(false);
+            }}
             className="p-12 bg-white rounded-lg shadow-md  flex flex-col gap-2 w-full md:w-1/2 xl:w-1/3 relative mt-5"
           >
             <h1>Update Profile</h1>
             <CldUploadWidget
               uploadPreset="facebook-clone"
-              onSuccess={(result) => setCover(result)}
+              onSuccess={(state) => {
+                const uploadInfo = state as CloudinaryUploadWidgetInfo;
+                const secureUrl = uploadInfo.info;
+                setCover(secureUrl);
+              }}
             >
               {({ open }) => {
                 return (
@@ -143,7 +152,6 @@ const UpdateUser = ({ user }: { user: User }) => {
             <button
               type="submit"
               className="bg-blue-500 p-2 mt-2 rounded-md text-white"
-              onClick={handleclick}
             >
               Update
             </button>
