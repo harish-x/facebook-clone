@@ -4,11 +4,12 @@ import Image from "next/image";
 import React, {  useState } from "react";
 import { updateProfile } from "@/lib/actions";
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
+import { useRouter } from "next/navigation";
 
 const UpdateUser = ({ user }: { user: User }) => {
   const [isopen, setOpen] = useState(false);
   const [cover, setCover] = useState<any>(false);
-
+const router = useRouter()
  
   return (
     <div>
@@ -28,6 +29,7 @@ const UpdateUser = ({ user }: { user: User }) => {
                 cover?.secure_url
               );
               setOpen(false);
+              router.refresh()
             }}
             className="p-12 bg-white rounded-lg shadow-md  flex flex-col gap-2 w-full md:w-1/2 xl:w-1/3 relative mt-5"
           >

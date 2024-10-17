@@ -1,21 +1,27 @@
 import Image from "next/image";
 import React from "react";
 import Comments from "./Comments";
+import { Post as PostType,User } from "@prisma/client";
 
-const Post = () => {
+
+type postType = PostType & { user: User } & { likes: [{ userId: string }] } & {
+  _count: { comments: number };
+};
+
+const Post = ({post}:{post:postType}) => {
   return (
     <div className="flex flex-col gap-4">
       {/* user */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Image
-            src="https://images.pexels.com/photos/17365983/pexels-photo-17365983/free-photo-of-balloon-over-the-desert.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            src={post.user.avatar || "/noAvatar.png"}
             alt=""
             width={40}
             height={40}
             className="w-10 h-10 rounded-full "
           />
-          <span className="font-medium">Batman</span>
+          <span className="font-medium">{ (post.user.name && post.user.surname) ? post.user.name + " "+post.user.surname : post.user.username}</span>
           <Image
             src="/more.png"
             alt=""
@@ -27,18 +33,17 @@ const Post = () => {
       </div>
       {/* desc */}
       <div className="flex flex-col gap-4">
-        <div className="w-full min-h-96 relative">
+        {post.img &&<div className="w-full min-h-96 relative">
           <Image
-            src="https://images.pexels.com/photos/17365983/pexels-photo-17365983/free-photo-of-balloon-over-the-desert.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            src={post.img}
             alt=""
             fill
             className="object-cover rounded-md "
           />
-        </div>
+        </div>}
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. At, id porro
-          totam ab quidem reiciendis minus eum ullam laborum dicta, rem omnis
-          rerum temporibus. Dolorum laboriosam accusamus quasi iusto delectus?
+          
+          {post.desc}
         </p>
       </div>
       {/* intraction */}
