@@ -3,10 +3,11 @@ import Link from "next/link";
 import React from "react";
 import MobileMenu from "./MobileMenu";
 import { ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
 import Spinner from "./Spinner";
 
 const Navbar = () => {
+  const {user} = useUser()
   return (
     <div className="h-24 flex items-center justify-between">
       <div className="md:hidden lg:block w-[20%]">
@@ -18,9 +19,7 @@ const Navbar = () => {
         <div className="flex gap-6 text-gray-600">
           <Link href={"/"} className="flex items-center gap-2">
             <img
-              src={
-                "https://img.icons8.com/?size=100&id=i6fZC6wuprSu&format=png&color=3b82f6"
-              }
+              src={"/home.png"}
               alt=""
               width={16}
               height={16}
@@ -28,11 +27,12 @@ const Navbar = () => {
             />
             <span>Home</span>
           </Link>
-          <Link href={"/"} className="flex items-center gap-2">
+          <Link
+            href={`/profile/${user?.username}`}
+            className="flex items-center gap-2"
+          >
             <img
-              src={
-                "https://img.icons8.com/?size=100&id=sRqPnYg3QRf7&format=png&color=3b82f6"
-              }
+              src={"/groups.png"}
               alt=""
               width={16}
               height={16}
@@ -42,9 +42,7 @@ const Navbar = () => {
           </Link>
           <Link href={"/"} className="flex items-center gap-2">
             <img
-              src={
-                "https://img.icons8.com/?size=100&id=pCgghrJwOmGQ&format=png&color=3b82f6"
-              }
+              src={"/stories.png"}
               alt=""
               width={16}
               height={16}
@@ -61,11 +59,7 @@ const Navbar = () => {
             className="bg-transparent outline-none"
             id=""
           />
-          <img
-            src="https://img.icons8.com/?size=100&id=82712&format=png&color=3b82f6"
-            alt=""
-            className="w-4 h-4"
-          />
+          <img src="/serach.png" alt="" className="w-4 h-4" />
         </div>
       </div>
       <div className="w-[30%] flex items-center gap-4 xl:gap-8 justify-end">
@@ -75,9 +69,9 @@ const Navbar = () => {
         <ClerkLoaded>
           <SignedIn>
             <div className="cursor-pointer flex items-center justify-center gap-2">
-              <Link href={"/profile"}>
+              <Link href={`/profile/${user?.username}`}>
                 <img
-                  src="https://img.icons8.com/?size=100&id=sRqPnYg3QRf7&format=png&color=3b82f6"
+                  src="/people.png"
                   alt=""
                   width={16}
                   height={16}
@@ -86,9 +80,9 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="cursor-pointer flex items-center justify-center gap-2">
-              <Link href={"/profile"}>
+              <Link href={"/"}>
                 <img
-                  src="https://img.icons8.com/?size=100&id=GT6L6Gn3DzSA&format=png&color=3b82f6"
+                  src="/messages.png"
                   alt=""
                   width={16}
                   height={16}
@@ -97,7 +91,7 @@ const Navbar = () => {
               </Link>
             </div>
             <div className="cursor-pointer flex items-center justify-center gap-2">
-              <Link href={"/profile"}>
+              <Link href={"/"}>
                 <img
                   src="https://img.icons8.com/?size=100&id=11642&format=png&color=3b82f6"
                   alt=""

@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Facebook Clone
 
-## Getting Started
+This project is a clone of Facebook, built using Next.js (v14), MySQL, Prisma ORM, and webhooks. The application mimics key features of Facebook, including post management, friend requests, photo uploads, and more.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Post Management**: Users can create, update, and delete posts.
+- **Friend Requests**: Users can send friend requests to other users. Recipients can choose to accept or decline requests.
+- **Block Users**: Block specific users to prevent them from interacting with you.
+- **Photo Uploads**: Users can upload photos to their profiles.
+- **Stories**: Users can set stories that are visible for a limited time.
+- **More Features**: Additional functionalities will be added over time.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js 14](https://nextjs.org/) - The latest version of Next.js is used for building the frontend and backend of the application.
+- **Database**: [MySQL](https://www.mysql.com/) - The relational database is used for storing user data, posts, friend requests, and other information.
+- **ORM**: [Prisma ORM](https://www.prisma.io/) - A modern database toolkit that simplifies database access.
+- **Webhooks**: Webhooks are used for real-time communication between different services.
+- **Authentication**: [Clerk](https://clerk.dev/) - Used for user authentication and session management.
+- **Image Uploads**: [Cloudinary](https://cloudinary.com/) - For image hosting and handling uploaded user content.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation
 
-## Learn More
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/facebook-clone.git
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Navigate to the project directory:
+    ```bash
+    cd facebook-clone
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Create a `.env` file in the root directory and add the following environment variables:
 
-## Deploy on Vercel
+    ### **Clerk Authentication**
+    ```plaintext
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your-clerk-publishable-key
+    CLERK_SECRET_KEY=your-clerk-secret-key
+    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+    NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    ### **Database Configuration**
+    ```plaintext
+    DATABASE_URL="mysql://root:9445@127.0.0.1:3306/facebook-clone"
+    WEBHOOK_SECRET=your-webhook-secret
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    ### **Cloudinary Image Handling**
+    ```plaintext
+    NEXT_PUBLIC_CLOUDINARY_API_KEY=your-cloudinary-api-key
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+    CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+    ```
+
+5. Run the Prisma migration to set up the database schema:
+    ```bash
+    npx prisma migrate dev
+    ```
+
+6. Start the development server:
+    ```bash
+    npm run dev
+    ```
+
+The application will be available at `http://localhost:3000`.
+
+## Database Schema
+
+The database schema is managed by Prisma ORM. You can find the Prisma schema in the `prisma/schema.prisma` file, which defines models for users, posts, friend requests, and more.
+
+## Webhooks
+
+Webhooks are integrated to handle real-time events such as notifications for friend requests, post interactions, and more. These webhooks ensure efficient communication between the frontend and backend services.
+
+## Contributing
+
+Contributions are welcome! If you have suggestions or want to contribute to this project, feel free to open an issue or submit a pull request.
+
