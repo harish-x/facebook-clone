@@ -89,7 +89,6 @@ const CommentList = ({
         {/* comments */}
         {optimisticComment.map((comment, i) => {
           return (
-            <>
               <div className="flex gap-4 justify-between mt-6" key={i}>
                 <Image
                   src={comment.user?.avatar || "/noAvatar.png"}
@@ -128,8 +127,7 @@ const CommentList = ({
                   height={16}
                   className="cursor-pointer w-4 h-4"
                 />
-              </div>
-            </>
+              </div> 
           );
         })}
       </div>

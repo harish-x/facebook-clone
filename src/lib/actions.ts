@@ -1,8 +1,8 @@
 "use server";
-
 import { auth } from "@clerk/nextjs/server";
 import prisma from "./client";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 export const switchFollow = async (userId: string) => {
   const { userId: currentUserId } = auth();
@@ -131,10 +131,10 @@ export const RejectFollowRequest = async (userId: string) => {
 };
 
 export const updateProfile = async (formData: FormData, cover: string) => {
-   console.log(formData, cover);
+  console.log(formData, cover);
   const { userId: currentUserId } = auth();
   const fields = Object.fromEntries(formData);
- 
+
   const filteredFields = Object.fromEntries(
     Object.entries(fields).filter(([_, value]) => value !== "")
   );
@@ -149,7 +149,7 @@ export const updateProfile = async (formData: FormData, cover: string) => {
     work: z.string().max(50).optional(),
   });
 
-  const validateFields = Profile.safeParse({cover, ...filteredFields });
+  const validateFields = Profile.safeParse({ cover, ...filteredFields });
   if (!validateFields.success) throw new Error("something went wrong");
   if (!currentUserId) throw new Error("something went wrong");
   try {
@@ -161,14 +161,13 @@ export const updateProfile = async (formData: FormData, cover: string) => {
     });
   } catch (error) {
     console.log(error);
-    
-    throw new Error("something went wrong");
 
+    throw new Error("something went wrong");
   }
 };
 
 export const switchLike = async (postId: number) => {
-const { userId } = auth();
+  const { userId } = auth();
   if (!userId) throw new Error("something went wrong");
   try {
     const existingLike = await prisma.like.findFirst({
@@ -176,42 +175,61 @@ const { userId } = auth();
         PostId: postId,
         userId,
       },
-    })
+    });
     if (existingLike) {
       await prisma.like.delete({
         where: {
           id: existingLike.id,
         },
-      })
+      });
     } else {
       await prisma.like.create({
         data: {
           PostId: postId,
           userId,
         },
-      })
+      });
     }
   } catch (error) {
     console.log(error);
-    
   }
 };
 
-
-export const addComments = async(postId:number,desc:string) => {
+export const addComments = async (postId: number, desc: string) => {
   const { userId } = auth();
   if (!userId) throw new Error("something went wrong");
   try {
-  const createdComment =  await prisma.comment.create({
+    const createdComment = await prisma.comment.create({
       data: {
         PostId: postId,
         userId,
-        desc
+        desc,
       },
-  })
+    });
     return createdComment;
   } catch (error) {
     console.log(error);
-    
   }
-}
+};
+
+export const addPost = async (formData: FormData, img: string) => {
+  const desc = formData.get("desc") as string;
+  if (!desc) throw new Error("something went wrong");
+  const Desc = z.string().min(2).max(200);
+  const validateDesc = Desc.safeParse(desc);
+  if (!validateDesc.success) throw new Error("something went wrong");
+  const { userId } = auth();
+  if (!userId) throw new Error("something went wrong");
+  try {
+     await prisma.post.create({
+      data: {
+        desc: validateDesc.data,
+        userId,
+        img,
+      },
+    });
+   revalidatePath("/");
+  } catch (error) {
+    console.log(error);
+  }
+};
