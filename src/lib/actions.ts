@@ -166,3 +166,52 @@ export const updateProfile = async (formData: FormData, cover: string) => {
 
   }
 };
+
+export const switchLike = async (postId: number) => {
+const { userId } = auth();
+  if (!userId) throw new Error("something went wrong");
+  try {
+    const existingLike = await prisma.like.findFirst({
+      where: {
+        PostId: postId,
+        userId,
+      },
+    })
+    if (existingLike) {
+      await prisma.like.delete({
+        where: {
+          id: existingLike.id,
+        },
+      })
+    } else {
+      await prisma.like.create({
+        data: {
+          PostId: postId,
+          userId,
+        },
+      })
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+};
+
+
+export const addComments = async(postId:number,desc:string) => {
+  const { userId } = auth();
+  if (!userId) throw new Error("something went wrong");
+  try {
+  const createdComment =  await prisma.comment.create({
+      data: {
+        PostId: postId,
+        userId,
+        desc
+      },
+  })
+    return createdComment;
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
