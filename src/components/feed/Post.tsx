@@ -1,14 +1,18 @@
 import Image from "next/image";
-import React from "react";
+import React, { Suspense } from "react";
 import Comments from "./Comments";
 import { Post as PostType, User } from "@prisma/client";
 import PostIntraction from "./PostIntraction";
+import Spinner from "../Spinner";
+import Postinfo from "./PostInfo";
+import { auth } from "@clerk/nextjs/server";
 
 type postType = PostType & { user: User } & { likes: [{ userId: string }] } & {
   _count: { comments: number };
 };
 
 const Post = ({ post }: { post: postType }) => {
+  const {userId} = auth()
   return (
     <div className="flex flex-col gap-4">
       {/* user */}
@@ -26,14 +30,9 @@ const Post = ({ post }: { post: postType }) => {
               ? post.user.name + " " + post.user.surname
               : post.user.username}
           </span>
-          <Image
-            src="/more.png"
-            alt=""
-            width={40}
-            height={40}
-            className="w-5 h-5 rounded-full "
-          />
+          
         </div>
+      {  userId === post.userId && <Postinfo postId={post.id}/>}
       </div>
       {/* desc */}
       <div className="flex flex-col gap-4">
@@ -50,7 +49,10 @@ const Post = ({ post }: { post: postType }) => {
         <p>{post.desc}</p>
       </div>
       {/* intraction */}
+      <Suspense fallback={<Spinner />}>
+
       <PostIntraction postId={post.id} likes={post.likes.map((l) => l.userId)} commentNumber={post._count.comments} />
+      </Suspense>
       <Comments postId={post.id} />
     </div>
   );
