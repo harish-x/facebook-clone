@@ -221,15 +221,49 @@ export const addPost = async (formData: FormData, img: string) => {
   const { userId } = auth();
   if (!userId) throw new Error("something went wrong");
   try {
-     await prisma.post.create({
+    await prisma.post.create({
       data: {
         desc: validateDesc.data,
         userId,
         img,
       },
     });
-   revalidatePath("/");
+    revalidatePath("/");
   } catch (error) {
     console.log(error);
   }
 };
+
+export const addStory = async (img: string) => {
+  const { userId } = auth();
+  if (!userId) throw new Error("something went wrong");
+  try {
+    const existingStory = await prisma.story.findFirst({
+      where: {
+        userId,
+      }
+    })
+    if(existingStory) {
+      await prisma.story.delete({
+        where: {
+          id: existingStory.id
+        }
+      })
+    }
+   const createdstory = await prisma.story.create({
+      data: {
+        userId,
+        img,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+     },
+     include: {
+       user: true
+     }
+    });
+    return createdstory;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
